@@ -1,42 +1,61 @@
-import { useEffect, useState } from "react";
-import "./App.css";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [animate, setAnimate] = useState(false);
+  const [textOne, setTextOne] = useState("");
+  const [textTwo, setTextTwo] = useState("");
+  const [highlightedOne, setHighlightedOne] = useState("");
+  const [highlightedTwo, setHighlightedTwo] = useState("");
 
-  useEffect(() => {
-    const timeOut = setTimeout(() => {
-      setAnimate(false);
-    }, 500);
-    return () => clearTimeout(timeOut);
-  }, [count]);
+  const refOne = useRef<HTMLDivElement>(null);
+  const refTwo = useRef<HTMLDivElement>(null);
+
+  const handleCompare = () => {
+    const wordsOne = textOne.split(/\s+/);
+    const wordsTwo = textTwo.split(/\s+/);
+    const commonSet = new Set(
+      wordsOne.filter((word) => wordsTwo.includes(word))
+    );
+
+    const highlightText = (words: string[]) =>
+      words
+        .map((word) =>
+          commonSet.has(word)
+            ? `<span class="bg-green-300 px-1 rounded">${word}</span>`
+            : word
+        )
+        .join(" ");
+
+    setHighlightedOne(highlightText(wordsOne));
+    setHighlightedTwo(highlightText(wordsTwo));
+  };
+
+  const handleInput = (setter: any, e: any) => {
+    setter(e.currentTarget.innerText);
+  };
 
   return (
-    <div className="bg-red-400 h-screen w-full flex justify-center gap-2  items-center">
-      <button
-        onClick={() => {
-          setCount(count + 1), setAnimate(true);
-        }}
-        className=" cursor-pointer font-lg text-xl text-green-500  px-6  border border-green-500 bg-green-200 p-2 rounded-full"
-      >
-        increse
-      </button>
-      <h1
-        className={`${
-          animate && "scale-150"
-        } text-white  font-sans transform hover:cursor-pointer duration-300 hover:scale-75`}
-      >
-        {count}
-      </h1>
-      <button
-        onClick={() => {
-          if (count >= 1) setCount(count - 1), setAnimate(true);
-        }}
-        className=" cursor-pointer font-lg text-xl text-green-500  px-6  border border-red-500 bg-red-200 p-2 rounded-full"
-      >
-        decrese
-      </button>
+    <div className="flex flex-col items-center w-full h-full p-4 gap-4">
+      <div className="flex gap-2 w-full">
+        <div
+          ref={refOne}
+          contentEditable
+          onInput={(e) => handleInput(setTextOne, e)}
+          className="flex-1 h-48 p-2 border transition-all duration-300 border-blue-300 rounded overflow-auto"
+          dangerouslySetInnerHTML={{ __html: highlightedOne || textOne }}
+        ></div>
+        <div
+          ref={refTwo}
+          contentEditable
+          onInput={(e) => handleInput(setTextTwo, e)}
+          className="flex-1 h-48 p-2 border transition-all duration-300 border-blue-300  rounded overflow-auto"
+          dangerouslySetInnerHTML={{ __html: highlightedTwo || textTwo }}
+        ></div>
+      </div>
+
+      <Button className="text-white" onClick={handleCompare}>
+        შედარება
+      </Button>
     </div>
   );
 }
