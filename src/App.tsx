@@ -51,14 +51,14 @@ function App() {
   }, [textTwo]);
 
   return (
-    <div className="flex flex-col items-center w-full h-full p-4 gap-4">
-      <div className="flex gap-2 w-full">
+    <div className="flex flex-col items-center w-full h-full gap-4">
+      <div className="md:flex space-y-4 md:space-y-0 gap-2 w-full">
         <div
           ref={refOne}
           contentEditable
           suppressContentEditableWarning
           onInput={(e) => handleInput(setTextOne, e)}
-          className="flex-1 h-48 p-2 border border-blue-300 rounded overflow-auto"
+          className="flex-1 h-48 p-2  border border-blue-300 rounded overflow-auto"
         ></div>
         <div
           ref={refTwo}

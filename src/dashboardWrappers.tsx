@@ -9,7 +9,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <div className={` bg-gray-50 text-gray-900 w-full min-h-screen`}>
       <SidebarProvider>
         <Sidebar />
-        <main className="w-full h-full">
+        <main className="w-full h-full px-4">
           <Header />
           {children}
         </main>
