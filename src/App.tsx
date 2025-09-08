@@ -1,11 +1,12 @@
-import { useState, useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "./redux";
+import { setTextOne, setTextTwo } from "./state";
 
 function App() {
-  const [textOne, setTextOne] = useState("");
-  const [textTwo, setTextTwo] = useState("");
-  const [highlightedOne, setHighlightedOne] = useState("");
-  const [highlightedTwo, setHighlightedTwo] = useState("");
+  const dispatch = useAppDispatch();
+  const textOne = useAppSelector((state) => state.global.textOne);
+  const textTwo = useAppSelector((state) => state.global.textTwo);
 
   const refOne = useRef<HTMLDivElement>(null);
   const refTwo = useRef<HTMLDivElement>(null);
@@ -17,7 +18,7 @@ function App() {
       wordsOne.filter((word) => wordsTwo.includes(word))
     );
 
-    const highlightText = (words: string[]) =>
+    const highlight = (words: string[]) =>
       words
         .map((word) =>
           commonSet.has(word)
@@ -26,13 +27,28 @@ function App() {
         )
         .join(" ");
 
-    setHighlightedOne(highlightText(wordsOne));
-    setHighlightedTwo(highlightText(wordsTwo));
+    if (refOne.current) refOne.current.innerHTML = highlight(wordsOne);
+    if (refTwo.current) refTwo.current.innerHTML = highlight(wordsTwo);
   };
 
-  const handleInput = (setter: any, e: any) => {
-    setter(e.currentTarget.innerText);
+  const handleInput = (
+    action: (value: string) => any,
+    e: React.FormEvent<HTMLDivElement>
+  ) => {
+    dispatch(action(e.currentTarget.innerText));
   };
+
+  useEffect(() => {
+    if (refOne.current && refOne.current.innerText !== textOne) {
+      refOne.current.innerText = textOne;
+    }
+  }, [textOne]);
+
+  useEffect(() => {
+    if (refTwo.current && refTwo.current.innerText !== textTwo) {
+      refTwo.current.innerText = textTwo;
+    }
+  }, [textTwo]);
 
   return (
     <div className="flex flex-col items-center w-full h-full p-4 gap-4">
@@ -40,16 +56,16 @@ function App() {
         <div
           ref={refOne}
           contentEditable
+          suppressContentEditableWarning
           onInput={(e) => handleInput(setTextOne, e)}
-          className="flex-1 h-48 p-2 border transition-all duration-300 border-blue-300 rounded overflow-auto"
-          dangerouslySetInnerHTML={{ __html: highlightedOne || textOne }}
+          className="flex-1 h-48 p-2 border border-blue-300 rounded overflow-auto"
         ></div>
         <div
           ref={refTwo}
           contentEditable
+          suppressContentEditableWarning
           onInput={(e) => handleInput(setTextTwo, e)}
-          className="flex-1 h-48 p-2 border transition-all duration-300 border-blue-300  rounded overflow-auto"
-          dangerouslySetInnerHTML={{ __html: highlightedTwo || textTwo }}
+          className="flex-1 h-48 p-2 border border-blue-300 rounded overflow-auto"
         ></div>
       </div>
 

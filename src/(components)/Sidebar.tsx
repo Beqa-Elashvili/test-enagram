@@ -1,165 +1,129 @@
-import { useAppDispatch, useAppSelector } from "../redux";
-import { setIsSidebarCollapsed } from "../state";
 import {
-  LucideIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
+
+import {
   BookOpenCheck,
   CaseSensitive,
   Mic,
   AudioLines,
-  ChevronsLeft,
-  ChevronsRight,
   ClipboardPen,
   Ellipsis,
+  ChevronsLeft,
+  ArrowRight,
+  ChevronsRight,
 } from "lucide-react";
-import { useEffect } from "react";
 
-interface SidebarLinksProps {
-  href: string;
-  icon: LucideIcon;
-  label: string;
-  isCollapseed: boolean;
-}
+const items = [
+  { href: "/", label: "მართლმწერი", icon: BookOpenCheck },
+  { href: "/2", label: "ტექსტის შედარება", icon: CaseSensitive },
+  {
+    href: "/3",
+    label: (
+      <>
+        ხმა <ArrowRight className="inline w-4 h-4 mx-1" /> ტექსტი
+      </>
+    ),
+    icon: Mic,
+  },
+  {
+    href: "/4",
+    label: (
+      <>
+        ტექსტი <ArrowRight className="inline w-4 h-4 mx-1" /> ხმა
+      </>
+    ),
+    icon: AudioLines,
+  },
+  { href: "/5", label: "PDF კონვერტაცია", icon: ClipboardPen },
+];
 
-const SidebarLinks = ({
-  href,
-  icon: Icon,
-  label,
-  isCollapseed,
-}: SidebarLinksProps) => {
+export default function AppSidebar() {
   const pathname = window.location.pathname;
-
-  const isActive =
-    pathname === href || (pathname === "/" && href === "/dashboard");
+  const { open, setOpen } = useSidebar();
 
   return (
-    <a href={href} className="no-underline">
-      <div
-        className={`cursor-pointer flex items-center ${
-          isCollapseed
-            ? "justify-center py-4"
-            : "justify-start py-4 ml-2 rounded-l-full  px-4"
-        } 
-      hover:text-blue-400 hover:bg-blue-100 text-white gap-3 transition-colors ${
-        isActive ? "bg-white text-primary" : ""
-      }
-      `}
+    <Sidebar
+      collapsible="icon"
+      className="bg-primary text-white min-h-screen shadow-md flex flex-col justify-between"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="p-2 flex self-end"
+        aria-label="Toggle sidebar"
       >
-        <Icon className={`w-6 h-6 ${isActive && "text-primary"}  `} />
-        <span
-          className={`${
-            isCollapseed ? "hidden" : "block"
-          } text-xs font-semibold ${
-            isActive && "text-primary"
-          } underline-none `}
-        >
-          {label}
-        </span>
-      </div>
-    </a>
-  );
-};
-
-const Sidebar = () => {
-  const pathname = window.location.pathname;
-  const dispatch = useAppDispatch();
-  const isSidebarCollapsed = useAppSelector(
-    (state) => state.global.isSidebarCollapsed
-  );
-
-  const toggleSidebar = () => {
-    dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
-  };
-
-  useEffect(() => {
-    if (!isSidebarCollapsed) {
-      dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
-    }
-  }, [pathname]);
-
-  const sidebarClassnames = `flex min-h-screen flex-col ${
-    isSidebarCollapsed ? "w-0 md:w-16" : "w-80 md:w-[240px]"
-  } bg-primary   transition-all flex justify-between duration-300 overflow-hidden h-full shadow-md z-40`;
-
-  return (
-    <div className={sidebarClassnames}>
-      <div>
-        <div
-          className={` flex gap-3 pt-8  ${
-            isSidebarCollapsed
-              ? "px-2 w-full flex-col items-center justify-between "
-              : "px-8 w-full justify-between items-start flex-row-reverse"
-          }`}
-        >
-          <button
-            className="bg-transparent  bg-red-200 cursor-pointer text-gray-500  border-none"
-            onClick={toggleSidebar}
-          >
-            {isSidebarCollapsed ? (
-              <ChevronsRight className="w-4 h-4" />
-            ) : (
-              <ChevronsLeft className="w-4 h-4" />
-            )}
-          </button>
+        {open ? (
+          <ChevronsLeft className="text-gray-500 w-4 h-4" />
+        ) : (
+          <ChevronsRight className="text-gray-500 w-4 h-4" />
+        )}
+      </button>
+      <SidebarContent>
+        <div className="flex items-center justify-between px-6">
           <img
-            src={`${
-              isSidebarCollapsed ? "icons/logoMini.png" : "icons/fullLogo.png"
-            }`}
-            alt="logo"
+            src="/icons/fullLogo.png"
+            alt="Full Logo"
             className="h-12 object-contain"
           />
         </div>
-        <div className="flex flex-col gap-2 mt-8">
-          <SidebarLinks
-            href="/"
-            icon={BookOpenCheck}
-            label="მართლმწერი"
-            isCollapseed={isSidebarCollapsed}
-          />
-          <SidebarLinks
-            href="/2"
-            icon={CaseSensitive}
-            label="ტექსტის შედარება"
-            isCollapseed={isSidebarCollapsed}
-          />{" "}
-          <SidebarLinks
-            href="/3"
-            icon={Mic}
-            label="ხმა > ტექსტი"
-            isCollapseed={isSidebarCollapsed}
-          />{" "}
-          <SidebarLinks
-            href="/4"
-            icon={AudioLines}
-            label="ტექსტი > ხმა"
-            isCollapseed={isSidebarCollapsed}
-          />
-          <SidebarLinks
-            href="/5"
-            icon={ClipboardPen}
-            label="PDF კონვერტაცია"
-            isCollapseed={isSidebarCollapsed}
-          />
-        </div>
-      </div>
-      <div
-        className={`${
-          isSidebarCollapsed ? "hidden" : "block"
-        }   border-t border-gray-400 `}
-      >
-        <div className="flex justify-between items-center my-4 mx-2 ">
-          <div className=" text-white flex items-center gap-2">
-            <div className="rounded-full  h-8 w-8 flex items-center justify-center font-semibold bg-blue-400">
-              <p className="text-center text-xs">თ</p>
-            </div>
-            <p className="font-medium font-mono">თამარ ონიანი</p>
-          </div>
-          <div>
-            <Ellipsis className="text-white h-4 w-4" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map(({ href, icon: Icon, label }) => {
+                const isActive =
+                  pathname === href ||
+                  (pathname === "/" && href === "/dashboard");
 
-export default Sidebar;
+                return (
+                  <SidebarMenuItem
+                    key={href}
+                    className={`hover:bg-blue-400 p-2  font-medium hover:text-blue-600 ${
+                      open ? "rounded-l-full" : "rounded-full"
+                    } transition-colors ${
+                      isActive ? "bg-white text-primary" : "text-white"
+                    }`}
+                  >
+                    <SidebarMenuButton asChild>
+                      <a
+                        href={href}
+                        className="flex items-center gap-3 px-1 py-3"
+                      >
+                        <Icon
+                          className={`w-6 h-6 ${
+                            isActive ? "text-primary" : "text-white"
+                          }`}
+                        />
+                        <span className="font-medium">{label}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="p-0">
+        <div className="border-t border-gray-400 px-2 text-center py-4 hidden md:flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="rounded-full bg-blue-400 h-8 w-8 flex items-center justify-center font-semibold text-white text-xs">
+              თ
+            </div>
+            {open && (
+              <p className="font-medium font-mono text-white">თამარ ონიანი</p>
+            )}
+          </div>
+          {open && <Ellipsis className="text-white w-5 h-5 cursor-pointer" />}
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
