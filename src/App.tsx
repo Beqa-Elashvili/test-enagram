@@ -13,8 +13,6 @@ function App() {
   const refTwo = useRef<HTMLDivElement>(null);
 
   const [isSwapped, setIsSwapped] = useState(false);
-  const [prevTextOne, setPrevTextOne] = useState(textOne);
-  const [prevTextTwo, setPrevTextTwo] = useState(textTwo);
 
   const handleCompare = () => {
     const wordsOne = textOne.split(/\s+/);
