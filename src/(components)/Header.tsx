@@ -54,12 +54,9 @@ function Header() {
           <Menu className="text-white" />
         </div>
         <div className="border-b py-4 px-6">
-          <Select>
+          <Select defaultValue={items[1].value}>
             <SelectTrigger className="md:w-[220px] border-none">
-              <div className="flex gap-2 items-center">
-                <CaseSensitive className="w-5 h-5 text-primary" />
-                <span className="text-sm">ტექსტის შედარება</span>
-              </div>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-none">
               <SelectGroup className="[&_[data-radix-collection-item]]:cursor-pointer border-none">
