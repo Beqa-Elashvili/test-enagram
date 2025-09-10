@@ -18,36 +18,23 @@ function App() {
     const wordsOne = textOne.split(/\s+/);
     const wordsTwo = textTwo.split(/\s+/);
 
-    // Sets for fast lookup
     const setOne = new Set(wordsOne);
     const setTwo = new Set(wordsTwo);
 
-    // Common words currently in both texts
     const commonWords = new Set(wordsOne.filter((word) => setTwo.has(word)));
 
-    // Words deleted from one side are those that:
-    // - appear in one text but not the other, but only if they appeared in the other text as well (approximation)
-    // So: words that appear only in one text are NOT red, only those that appeared in both before are red.
-    // Since we only have current texts, consider words unique to one side are red in missing side.
-
-    // Highlight function with red and green logic
     const highlight = (words: string[], isFirstText: boolean) =>
       words
         .map((word) => {
           if (commonWords.has(word)) {
-            // Word common to both texts, highlight green
             return `<span class="bg-green-300 px-1 rounded">${word}</span>`;
           } else {
-            // Word is unique to this text
-            // Check if this word is missing from the other text and appeared previously (approximate by assuming any word in other text is common)
             const isDeleted = isFirstText
               ? !setTwo.has(word)
               : !setOne.has(word);
             if (isDeleted) {
-              // Word missing in other text → highlight red in this text
               return `<span class="bg-red-300 px-1 rounded">${word}</span>`;
             }
-            // Otherwise, no highlight
             return word;
           }
         })
@@ -80,13 +67,12 @@ function App() {
   };
 
   useEffect(() => {
-    handleCompare(); // 👈 Automatically compare on toggle
+    handleCompare();
   }, [isSwapped]);
 
   return (
     <div className="flex my-6 flex-col px-6 items-center w-full h-full gap-4">
       <div className="md:flex items-center space-y-4 md:space-y-0 gap-2 w-full">
-        {/* Conditional render based on isSwapped */}
         {!isSwapped ? (
           <>
             <div
