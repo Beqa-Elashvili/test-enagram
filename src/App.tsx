@@ -126,7 +126,11 @@ function App() {
         )}
       </div>
 
-      <Button className="text-white" onClick={handleCompare}>
+      <Button
+        disabled={textOne === "" && textTwo === ""}
+        className="text-white"
+        onClick={handleCompare}
+      >
         შედარება
       </Button>
     </div>
