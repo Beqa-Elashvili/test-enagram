@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 
 const items = [
-  { href: "/#", label: "მართლმწერი", icon: BookOpenCheck },
+  { href: "/W", label: "მართლმწერი", icon: BookOpenCheck },
   { href: "/", label: "ტექსტის შედარება", icon: CaseSensitive },
   {
-    href: "/#",
+    href: "/V",
     label: (
       <>
         ხმა <ArrowRight className="inline w-4 h-4 mx-1" /> ტექსტი
@@ -35,7 +35,7 @@ const items = [
     icon: Mic,
   },
   {
-    href: "/#",
+    href: "/T",
     label: (
       <>
         ტექსტი <ArrowRight className="inline w-4 h-4 mx-1" /> ხმა
@@ -43,7 +43,7 @@ const items = [
     ),
     icon: AudioLines,
   },
-  { href: "/#", label: "PDF კონვერტაცია", icon: ClipboardPen },
+  { href: "/C", label: "PDF კონვერტაცია", icon: ClipboardPen },
 ];
 
 export default function AppSidebar() {
@@ -53,7 +53,7 @@ export default function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="bg-primary text-white min-h-screen shadow-md flex flex-col justify-between"
+      className="bg-primary  text-white min-h-screen shadow-md flex flex-col justify-between"
     >
       <button
         onClick={() => setOpen(!open)}

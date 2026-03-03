@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle, Menu } from "lucide-react";
-import { useAppDispatch } from "@/redux";
-import { clearTexts } from "@/state";
+import { useAppDispatch, useAppSelector } from "@/redux";
+import { clearTexts, setIsSidebarCollapsed } from "@/state";
 import {
   ArrowRight,
   AudioLines,
@@ -18,6 +18,7 @@ import {
   ClipboardPen,
   Mic,
 } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
 
 function Header() {
   const dispatch = useAppDispatch();
@@ -45,6 +46,8 @@ function Header() {
     },
     { value: "/5", label: "PDF კონვერტაცია", icon: ClipboardPen },
   ];
+
+  const { textOne, textTwo } = useAppSelector((state) => state.global);
 
   return (
     <div>
@@ -99,10 +102,10 @@ function Header() {
         </div>
         <button
           onClick={() => dispatch(clearTexts())}
-          className="bg-gray-500 md:py-1 py-2  text-center  m-auto hover:bg-gray-600 rounded-md   w-full md:w-[150px] text-white  flex items-center justify-center gap-2 "
+          className={` ${textOne === "" || textTwo === "" ? "bg-gray-500" : " bg-blue-500"} md:py-1 py-2  text-center  m-auto hover:bg-gray-600 rounded-md   w-full md:w-[150px] text-white  flex items-center justify-center gap-2 `}
         >
           <PlusCircle />
-          <p className="text-xs font-semibold">ახლის გახსნა</p>
+          <p className="text-xs  font-semibold">ახლის გახსნა</p>
         </button>
       </div>
     </div>

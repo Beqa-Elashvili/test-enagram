@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "./redux";
 import { setTextOne, setTextTwo } from "./state";
-import { MoveHorizontal, MoveVertical } from "lucide-react";
+import { MoveHorizontal, MoveVertical, CircleDot } from "lucide-react";
 import { diffChars } from "diff";
 
 function App() {
@@ -14,9 +14,10 @@ function App() {
   const refTwo = useRef<HTMLDivElement>(null);
 
   const [isSwapped, setIsSwapped] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  // 🔥 Compare function using real diff
-  const handleCompare = () => {
+  const runDiff = () => {
     const differences = diffChars(textOne, textTwo);
 
     let resultOld = "";
@@ -24,13 +25,10 @@ function App() {
 
     differences.forEach((part) => {
       if (part.added) {
-        // Added text → green in second box
         resultNew += `<span class="bg-green-300 px-1 rounded">${part.value}</span>`;
       } else if (part.removed) {
-        // Removed text → red in first box
         resultOld += `<span class="bg-red-300 px-1 rounded">${part.value}</span>`;
       } else {
-        // Same text → normal
         resultOld += part.value;
         resultNew += part.value;
       }
@@ -40,7 +38,31 @@ function App() {
     if (refTwo.current) refTwo.current.innerHTML = resultNew;
   };
 
-  // 🔥 Handle typing
+  const handleCompare = () => {
+    setIsLoading(true);
+    setProgress(0);
+
+    const duration = 3000;
+    const intervalTime = 30;
+    const totalSteps = duration / intervalTime;
+    let currentStep = 0;
+
+    const interval = setInterval(() => {
+      currentStep++;
+      const percent = Math.min(
+        Math.round((currentStep / totalSteps) * 100),
+        100,
+      );
+      setProgress(percent);
+
+      if (percent >= 100) {
+        clearInterval(interval);
+        setIsLoading(false);
+        runDiff();
+      }
+    }, intervalTime);
+  };
+
   const handleInput = (
     action: (value: string) => any,
     e: React.FormEvent<HTMLDivElement>,
@@ -48,7 +70,6 @@ function App() {
     dispatch(action(e.currentTarget.innerText));
   };
 
-  // Keep editable text synced with Redux
   useEffect(() => {
     if (refOne.current && refOne.current.innerText !== textOne) {
       refOne.current.innerText = textOne;
@@ -65,10 +86,6 @@ function App() {
     setIsSwapped((prev) => !prev);
   };
 
-  useEffect(() => {
-    handleCompare();
-  }, [isSwapped]);
-
   return (
     <div className="flex my-6 flex-col px-6 items-center w-full h-full gap-4">
       <div className="md:flex items-center space-y-4 md:space-y-0 gap-2 w-full">
@@ -79,7 +96,7 @@ function App() {
               contentEditable
               suppressContentEditableWarning
               onInput={(e) => handleInput(setTextOne, e)}
-              className="flex-1 h-48 bg-blue-50 p-2 border border-blue-300 rounded overflow-auto"
+              className="flex-1 bg-[var(--textarea-background)] p-2 h-48 outline-none rounded overflow-auto"
             />
             <MoveHorizontal
               className="cursor-pointer hidden md:block"
@@ -94,7 +111,7 @@ function App() {
               contentEditable
               suppressContentEditableWarning
               onInput={(e) => handleInput(setTextTwo, e)}
-              className="flex-1 h-48 bg-blue-50 p-2 border border-blue-300 rounded overflow-auto"
+              className="flex-1 bg-[var(--textarea-background)] h-48 outline-none p-2 rounded overflow-auto"
             />
           </>
         ) : (
@@ -104,7 +121,7 @@ function App() {
               contentEditable
               suppressContentEditableWarning
               onInput={(e) => handleInput(setTextTwo, e)}
-              className="flex-1 h-48 bg-blue-50 p-2 border border-blue-300 rounded overflow-auto"
+              className="flex-1 bg-[var(--textarea-background)] h-48 outline-none p-2 rounded overflow-auto"
             />
             <MoveHorizontal
               className="cursor-pointer hidden md:block"
@@ -119,14 +136,38 @@ function App() {
               contentEditable
               suppressContentEditableWarning
               onInput={(e) => handleInput(setTextOne, e)}
-              className="flex-1 h-48 bg-blue-50 p-2 border border-blue-300 rounded overflow-auto"
+              className="flex-1 bg-[var(--textarea-background)] h-48 outline-none p-2 rounded overflow-auto"
             />
           </>
         )}
       </div>
 
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+          <div className="bg-white  p-6 rounded-2xl shadow-2xl flex items-center  gap-4 animate-in fade-in">
+            <CircleDot className=" size-12 text-blue-500" />
+            <div className="flex flex-col w-full gap-1">
+              <p className="text-sm text-gray-500">
+                Converting...Thank you For your Patience
+              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-md font-semibold text-blue-500">
+                  {progress}%
+                </p>
+                <div className="w-full h-3 bg-gray-200 rounded-full  overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all duration-75"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Button
-        disabled={textOne === "" && textTwo === ""}
+        disabled={textOne === "" || textTwo === "" || isLoading}
         className="text-white"
         onClick={handleCompare}
       >
