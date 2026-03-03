@@ -22,6 +22,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 
 function Header() {
   const dispatch = useAppDispatch();
+  const { textOne, textTwo } = useAppSelector((state) => state.global);
 
   const items = [
     { value: "/", label: "მართლმწერი", icon: BookOpenCheck },
@@ -47,14 +48,17 @@ function Header() {
     { value: "/5", label: "PDF კონვერტაცია", icon: ClipboardPen },
   ];
 
-  const { textOne, textTwo } = useAppSelector((state) => state.global);
+  const { openMobile, setOpenMobile } = useSidebar();
 
   return (
     <div>
       <div className="md:hidden">
         <div className=" bg-primary py-2 px-6 flex justify-between items-center">
           <img src="/icons/fullLogo.png" alt="logo" />
-          <Menu className="text-white" />
+          <Menu
+            onClick={() => setOpenMobile(!openMobile)}
+            className="text-white"
+          />
         </div>
         <div className="border-b py-4 px-6">
           <Select defaultValue={items[1].value}>

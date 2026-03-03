@@ -48,7 +48,9 @@ const items = [
 
 export default function AppSidebar() {
   const pathname = window.location.pathname;
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, openMobile } = useSidebar();
+
+  console.log(openMobile);
 
   return (
     <Sidebar
@@ -60,10 +62,14 @@ export default function AppSidebar() {
         className="p-2 flex self-end"
         aria-label="Toggle sidebar"
       >
-        {open ? (
-          <ChevronsLeft className="text-gray-500 w-4 h-4" />
-        ) : (
-          <ChevronsRight className="text-gray-500 w-4 h-4" />
+        {!openMobile && (
+          <>
+            {open ? (
+              <ChevronsLeft className="text-gray-500 w-4 h-4" />
+            ) : (
+              <ChevronsRight className="text-gray-500 w-4 h-4" />
+            )}
+          </>
         )}
       </button>
       <SidebarContent>
