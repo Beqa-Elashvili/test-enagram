@@ -50,8 +50,6 @@ export default function AppSidebar() {
   const pathname = window.location.pathname;
   const { open, setOpen, openMobile } = useSidebar();
 
-  console.log(openMobile);
-
   return (
     <Sidebar
       collapsible="icon"
