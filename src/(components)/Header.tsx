@@ -25,10 +25,10 @@ function Header() {
   const { textOne, textTwo } = useAppSelector((state) => state.global);
 
   const items = [
-    { value: "/#", label: "მართლმწერი", icon: BookOpenCheck },
-    { value: "/", label: "ტექსტის შედარება", icon: CaseSensitive },
+    { value: "/", label: "მართლმწერი", icon: BookOpenCheck },
+    { value: "/2", label: "ტექსტის შედარება", icon: CaseSensitive },
     {
-      value: "/#",
+      value: "/3",
       label: (
         <>
           ხმა <ArrowRight className="inline w-4 h-4 mx-1" /> ტექსტი
@@ -37,7 +37,7 @@ function Header() {
       icon: Mic,
     },
     {
-      value: "/#",
+      value: "/4",
       label: (
         <>
           ტექსტი <ArrowRight className="inline w-4 h-4 mx-1" /> ხმა
@@ -45,7 +45,7 @@ function Header() {
       ),
       icon: AudioLines,
     },
-    { value: "/#", label: "PDF კონვერტაცია", icon: ClipboardPen },
+    { value: "/5", label: "PDF კონვერტაცია", icon: ClipboardPen },
   ];
 
   const { openMobile, setOpenMobile } = useSidebar();
