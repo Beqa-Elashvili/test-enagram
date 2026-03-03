@@ -9,7 +9,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle, Menu } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux";
-import { clearTexts, setIsSidebarCollapsed } from "@/state";
+import { clearTexts } from "@/state";
 import {
   ArrowRight,
   AudioLines,
