@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "./redux";
 import { setTextOne, setTextTwo } from "./state";
 import { MoveHorizontal, MoveVertical } from "lucide-react";
+import { diffChars } from "diff";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -14,42 +15,40 @@ function App() {
 
   const [isSwapped, setIsSwapped] = useState(false);
 
+  // 🔥 Compare function using real diff
   const handleCompare = () => {
-    const wordsOne = textOne.split(/\s+/);
-    const wordsTwo = textTwo.split(/\s+/);
+    const differences = diffChars(textOne, textTwo);
 
-    const setOne = new Set(wordsOne);
-    const setTwo = new Set(wordsTwo);
+    let resultOld = "";
+    let resultNew = "";
 
-    const commonWords = new Set(wordsOne.filter((word) => setTwo.has(word)));
+    differences.forEach((part) => {
+      if (part.added) {
+        // Added text → green in second box
+        resultNew += `<span class="bg-green-300 px-1 rounded">${part.value}</span>`;
+      } else if (part.removed) {
+        // Removed text → red in first box
+        resultOld += `<span class="bg-red-300 px-1 rounded">${part.value}</span>`;
+      } else {
+        // Same text → normal
+        resultOld += part.value;
+        resultNew += part.value;
+      }
+    });
 
-    const highlight = (words: string[], isFirstText: boolean) =>
-      words
-        .map((word) => {
-          if (commonWords.has(word)) {
-            return `<span class="bg-green-300 px-1 rounded">${word}</span>`;
-          } else {
-            const isDeleted = isFirstText
-              ? !setTwo.has(word)
-              : !setOne.has(word);
-            if (isDeleted) {
-              return `<span class="bg-red-300 px-1 rounded">${word}</span>`;
-            }
-            return word;
-          }
-        })
-        .join(" ");
-
-    if (refOne.current) refOne.current.innerHTML = highlight(wordsOne, true);
-    if (refTwo.current) refTwo.current.innerHTML = highlight(wordsTwo, false);
+    if (refOne.current) refOne.current.innerHTML = resultOld;
+    if (refTwo.current) refTwo.current.innerHTML = resultNew;
   };
+
+  // 🔥 Handle typing
   const handleInput = (
     action: (value: string) => any,
-    e: React.FormEvent<HTMLDivElement>
+    e: React.FormEvent<HTMLDivElement>,
   ) => {
     dispatch(action(e.currentTarget.innerText));
   };
 
+  // Keep editable text synced with Redux
   useEffect(() => {
     if (refOne.current && refOne.current.innerText !== textOne) {
       refOne.current.innerText = textOne;
@@ -63,7 +62,7 @@ function App() {
   }, [textTwo]);
 
   const handleToggle = () => {
-    setIsSwapped((prev: any) => !prev);
+    setIsSwapped((prev) => !prev);
   };
 
   useEffect(() => {
@@ -87,7 +86,7 @@ function App() {
               onClick={handleToggle}
             />
             <MoveVertical
-              className=" m-auto cursor-pointer md:hidden"
+              className="m-auto cursor-pointer md:hidden"
               onClick={handleToggle}
             />
             <div
@@ -112,7 +111,7 @@ function App() {
               onClick={handleToggle}
             />
             <MoveVertical
-              className=" m-auto cursor-pointer md:hidden"
+              className="m-auto cursor-pointer md:hidden"
               onClick={handleToggle}
             />
             <div
